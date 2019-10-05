@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.BotBuilderSamples.Controllers
 {
@@ -17,19 +18,25 @@ namespace Microsoft.BotBuilderSamples.Controllers
     {
         private readonly IBotFrameworkHttpAdapter Adapter;
         private readonly IBot Bot;
+        private readonly ILogger<BotController> Logger;
 
-        public BotController(IBotFrameworkHttpAdapter adapter, IBot bot)
+        public BotController(IBotFrameworkHttpAdapter adapter, IBot bot, ILogger<BotController> logger)
         {
             Adapter = adapter;
             Bot = bot;
+            Logger = logger;
         }
 
         [HttpPost, HttpGet]
         public async Task PostAsync()
         {
+            Logger.LogInformation("Calling Adapter.ProcessAsync");
+
             // Delegate the processing of the HTTP POST to the adapter.
             // The adapter will invoke the bot.
             await Adapter.ProcessAsync(Request, Response, Bot);
+
+            Logger.LogInformation("Called Adapter.ProcessAsync");
         }
     }
 }
