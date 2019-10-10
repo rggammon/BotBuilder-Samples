@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.BotBuilderSamples.Bots;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.StreamingExtensions;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -27,6 +28,12 @@ namespace Microsoft.BotBuilderSamples
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var aiOptions = new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions();
+            aiOptions.EnableAdaptiveSampling = false;
+
+            services.AddApplicationInsightsTelemetry(aiOptions);
+            services.Configure<TelemetryConfiguration>(Configuration.GetSection("ApplicationInsights"));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Create the Bot Framework Adapter with error handling enabled.
