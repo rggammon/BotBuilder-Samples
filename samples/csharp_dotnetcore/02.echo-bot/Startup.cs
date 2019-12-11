@@ -13,6 +13,7 @@ using Microsoft.BotBuilderSamples.Bots;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.StreamingExtensions;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Bot.Connector.Authentication;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -38,6 +39,8 @@ namespace Microsoft.BotBuilderSamples
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, WebSocketEnabledHttpAdapter>();
+
+            services.AddSingleton<ICredentialProvider, DisabledAuthCredentialProvider>();
 
             // Create the storage we'll be using for state
             services.AddSingleton<IStorage>(new AzureBlobStorage(Configuration["BlobStorageConnectionString"], Configuration["ContainerName"]));
