@@ -35,7 +35,7 @@ namespace Microsoft.BotBuilderSamples.Bots
         private readonly TelemetryClient _telemetryClient;
         private readonly bool _enableYouSaid = true;
         private readonly bool _enableStartWithOk = true;
-        private readonly string _voice;
+        private readonly string _voice = "Microsoft Server Speech Text to Speech Voice (en-US, BenjaminRUS)";
 
         public GatewayDynamicsBot(IConfiguration configuration, IHttpClientFactory httpClientFactory, IStorage storage, ILogger<GatewayDynamicsBot> logger, IOptions<TelemetryConfiguration> telemetryConfiguration)
         {
@@ -139,7 +139,7 @@ namespace Microsoft.BotBuilderSamples.Bots
                         }
                         else
                         {
-                            activity.Text = "Hello?";
+                            activity.Text = "Hello, thanks for calling the Voice Power Virtual Agent demo.";
                         }
 
                         activity.Speak = SimpleConvertToSSML(activity.Text);
@@ -205,31 +205,31 @@ namespace Microsoft.BotBuilderSamples.Bots
             }
         }
 
-        //private string SimpleConvertToSSML(string text)
-        //{
-        //    var locale = "en-US";
-
-        //    string ssmlTemplate = @"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='{2}'>
-        //            <voice name='{1}'>{0}</voice>
-        //        </speak>";
-
-        //    return string.Format(ssmlTemplate, text, _voice, locale);
-        //}
-
-        private string SimpleConvertToSSML(string Message)
+        private string SimpleConvertToSSML(string text)
         {
-            string Lang = "en-US";
-            string VoiceName = "Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)";
-            string ExpressionType = "cheerful";
+            var locale = "en-US";
 
-            return $@"<speak version=""1.0"" xmlns=""https://www.w3.org/2001/10/synthesis"" xmlns:mstts=""https://www.w3.org/2001/mstts"" xml:lang=""{Lang}"">
-                <voice name=""{VoiceName}"">
-                    <mstts:express-as type=""{ExpressionType}"">
-                        {Message}
-                    </mstts:express-as>
-                </voice>
-            </speak>";
+            string ssmlTemplate = @"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='{2}'>
+                    <voice name='{1}'>{0}</voice>
+                </speak>";
+
+            return string.Format(ssmlTemplate, text, _voice, locale);
         }
+
+        //private string SimpleConvertToSSML(string Message)
+        //{
+        //    string Lang = "en-US";
+        //    string VoiceName = "Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)";
+        //    string ExpressionType = "cheerful";
+
+        //    return $@"<speak version=""1.0"" xmlns=""https://www.w3.org/2001/10/synthesis"" xmlns:mstts=""https://www.w3.org/2001/mstts"" xml:lang=""{Lang}"">
+        //        <voice name=""{VoiceName}"">
+        //            <mstts:express-as type=""{ExpressionType}"">
+        //                {Message}
+        //            </mstts:express-as>
+        //        </voice>
+        //    </speak>";
+        //}
 
         private async Task<string> ReceiveFromPowerVA(string conversationId, string watermark, ITurnContext turnContext, DirectLineClient directLineClient)
         {
