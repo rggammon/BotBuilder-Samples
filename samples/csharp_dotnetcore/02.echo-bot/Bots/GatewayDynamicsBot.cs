@@ -10,8 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Connector.DirectLine;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -154,9 +156,22 @@ namespace Microsoft.BotBuilderSamples.Bots
                     {
                         var text = _enableStartWithOk ? turnContext.Activity.Text.Substring(turnContext.Activity.Text.IndexOf(' ') + 1) : turnContext.Activity.Text;
 
-                        await SendToPowerVA(conversationId, text, turnContext, directLineClient);
+                        if (text.Equals("Talk to an agent", StringComparison.OrdinalIgnoreCase))
+                        {
+                            //_logger.LogInformation($"{turnContext.Activity?.Id} Handing off");
+                            //var context = new { TargetPhoneNumber = "+15098240812" };
+                            //var handoffEvent = EventFactory.CreateHandoffInitiation(turnContext, context);
+                            //await turnContext.SendActivityAsync(handoffEvent);
 
-                        watermark = await ReceiveFromPowerVA(conversationId, watermark, turnContext, directLineClient);
+                            var handoffActivity = Microsoft.Bot.Schema.Activity.CreateHandoffActivity();
+                            handoffActivity.ChannelData = new { TargetPhoneNumber = "+15098240812" };
+                            await turnContext.SendActivityAsync(handoffActivity);
+                        }
+                        else
+                        {
+                            await SendToPowerVA(conversationId, text, turnContext, directLineClient);
+                            watermark = await ReceiveFromPowerVA(conversationId, watermark, turnContext, directLineClient);
+                        }
                     }
                     else
                     {
